@@ -8,10 +8,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="5.0.1" />
+		<PackageReference Include="dapper" Version="2.0.90" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.5" />
-	</ItemGroup>
+		<PackageReference Include="Polly" Version="7.2.2" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+	    <PackageReference Include="Npgsql" Version="5.0.7" />
+</ItemGroup>
 
 </Project>
