@@ -24,10 +24,18 @@ services:
       - POSTGRES_DB=DiscountDb
     restart: always
     ports:
-        - "5432:5432"
+        - "5432:5432" #export other port beacase duplicating
     volumes:
       - postgres_data:/var/lib/postgresql/data/
- 
+
+  orderdb:
+    container_name: orderdb
+    environment:
+        SA_PASSWORD: "SwN12345678"
+        ACCEPT_EULA: "Y"
+    restart: always
+    ports:
+        - "1434:1433"
 # .NET service
   catalog.api:
     container_name: catalog.api
@@ -37,13 +45,14 @@ services:
     depends_on:
       - catalogdb
     ports:
-      - "8080:80"
+      - "8000:80"
 
   basket.api:
     container_name: basket.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "CacheSettings:ConnectionString=basketdb:6379"
+      - "GrpcSettings:DiscountUrl=http://discount.grpc"
     depends_on:
       - basketdb
     ports:
@@ -58,6 +67,29 @@ services:
       - discountdb
     ports:
       - "8002:80"
+
+  discount.grpc:
+    container_name: discount.grpc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;User Id=admin;Password=admin1234;"
+    depends_on:
+      - discountdb
+    ports:
+      - "8003:80"
+
+  ordering.api:
+    container_name: ordering.api
+    environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - "ConnectionStrings:OrderingConnectionString=Server=orderdb,1433;Database=OrderDb;User Id=sa;Password=SwN12345678"            
+        #- "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+        #- "ElasticConfiguration:Uri=http://elasticsearch:9200"
+    depends_on:
+        - orderdb
+        #- rabbitmq
+    ports:
+        - "8004:80"
 # OTHER SERVICES
   pgadmin:
     container_name: pgadmin
@@ -80,10 +112,20 @@ services:
     container_name: portainer
     restart: always
     ports:
-      - "8000:8000"
+      - "8080:8000"
       - "9000:9000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
   
+  rabbitmq:
+    container_name: rabbitmq
+    restart: always
+    ports:
+        - "5672:5672"
+        - "15672:15672"
+
+
+
+
 
