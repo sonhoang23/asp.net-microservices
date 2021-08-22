@@ -24,7 +24,7 @@ services:
       - POSTGRES_DB=DiscountDb
     restart: always
     ports:
-        - "5432:5432" #export other port beacase duplicating
+        - "5433:5432" #export other port beacase duplicating
     volumes:
       - postgres_data:/var/lib/postgresql/data/
 
@@ -53,6 +53,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - "CacheSettings:ConnectionString=basketdb:6379"
       - "GrpcSettings:DiscountUrl=http://discount.grpc"
+      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
     depends_on:
       - basketdb
     ports:
@@ -65,6 +66,7 @@ services:
       - "DatabaseSettings:ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;User Id=admin;Password=admin1234;"
     depends_on:
       - discountdb
+      - rabbitmq
     ports:
       - "8002:80"
 
@@ -83,11 +85,11 @@ services:
     environment:
         - ASPNETCORE_ENVIRONMENT=Development
         - "ConnectionStrings:OrderingConnectionString=Server=orderdb,1433;Database=OrderDb;User Id=sa;Password=SwN12345678"            
-        #- "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+        - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
         #- "ElasticConfiguration:Uri=http://elasticsearch:9200"
     depends_on:
         - orderdb
-        #- rabbitmq
+        - rabbitmq
     ports:
         - "8004:80"
 # OTHER SERVICES
@@ -124,8 +126,3 @@ services:
     ports:
         - "5672:5672"
         - "15672:15672"
-
-
-
-
-
