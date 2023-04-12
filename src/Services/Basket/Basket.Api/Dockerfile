@@ -6,11 +6,11 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["Services/Basket/Basket.Api/Basket.API.csproj", "Services/Basket/Basket.Api/"]
+COPY ["Services/Basket/Basket.API/Basket.API.csproj", "Services/Basket/Basket.Api/"]
 COPY ["BuildingBlocks/EventBus.Messages/EventBus.Messages.csproj", "BuildingBlocks/EventBus.Messages/"]
 RUN dotnet restore "Services/Basket/Basket.Api/Basket.API.csproj"
 COPY . .
-WORKDIR "/src/Services/Basket/Basket.Api"
+WORKDIR "/src/Services/Basket/Basket.API"
 RUN dotnet build "Basket.API.csproj" -c Release -o /app/build
 
 FROM build AS publish

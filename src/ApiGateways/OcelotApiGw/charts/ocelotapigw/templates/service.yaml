@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "ocelotapigw.fullname" . }}
+  labels:
+    app: {{ template "ocelotapigw.name" . }}
+    chart: {{ template "ocelotapigw.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "ocelotapigw.name" . }}
+    release: {{ .Release.Name }}
